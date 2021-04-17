@@ -8,7 +8,7 @@ import Tasks from '../features/tasks';
 import Votes from '../features/votes';
 import { useMachine } from '../hooks/useMachine';
 import { app, googleAuthProvider } from '../utils/firebase';
-import { Static } from './../features/static/index.jsx';
+import { Static } from "../features/static/index.jsx";
 
 export const authMachine = Machine({
   id: 'auth',
@@ -17,23 +17,23 @@ export const authMachine = Machine({
     idle: {
       on: {
         LOGGED_IN: 'loggedIn',
-        LOGGED_OUT: 'loggedOut'
-      }
+        LOGGED_OUT: 'loggedOut',
+      },
     },
     loggedOut: {
       on: {
-        LOGGED_IN: 'loggedIn'
-      }
+        LOGGED_IN: 'loggedIn',
+      },
     },
     loggedIn: {
       on: {
         LOGGED_OUT: {
           actions: (ctx, event) => event.payload,
-          target: 'loggedOut'
-        }
-      }
-    }
-  }
+          target: 'loggedOut',
+        },
+      },
+    },
+  },
 });
 
 const Project = () => {
@@ -45,11 +45,11 @@ const Project = () => {
     return () => {
       auth$.unsubscribe();
     };
-  }, []);
+  }, [send]);
   return (
     <article>
-      <Static />
-      <Stats />
+      {/* <Static /> */}
+      {/* <Stats /> */}
       {state.matches('loggedIn') ? (
         <>
           <div className="tc">
@@ -62,10 +62,9 @@ const Project = () => {
               Logout
             </Button>
           </div>
-          <Tasks />
+          {/* <Tasks /> */}
           <Votes />
-          <Chat />
-         
+          {/* <Chat /> */}
         </>
       ) : (
         <div className="tc">

@@ -5,6 +5,7 @@ export const Vote = ({ title, id, dispatch, setId }) => (
   <Heading
     level={3}
     margin={{ vertical: 'medium' }}
+    className="pointer"
     onClick={() => {
       setId(id);
       dispatch({ type: 'EXISTING_POLL_OPENED' });

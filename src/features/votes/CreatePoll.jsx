@@ -8,7 +8,7 @@ export const CreatePoll = ({ dispatch, set }) => {
 
   return (
     <div>
-      <h1>{title ? title : 'Create Poll'}</h1>
+      <h1>{title || 'Create Poll'}</h1>
       <ul>
         {fields.map(field => (
           <li>{field}</li>
@@ -28,12 +28,12 @@ export const CreatePoll = ({ dispatch, set }) => {
           placeholder="title"
           className="db"
         />
-        <Components
+        {/* <Components
           value={value}
           setValue={setValue}
           placeholder="Options go here..."
         />
-        <button type="submit">Add Option</button>
+        <button type="submit">Add Option</button> */}
       </form>
       <br />
       <form
@@ -44,7 +44,7 @@ export const CreatePoll = ({ dispatch, set }) => {
             createdBy: 'Josh',
             description: value,
             deadline: '7 days',
-            fields
+            fields,
           });
 
           dispatch('POLL_CREATED');

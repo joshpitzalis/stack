@@ -5,6 +5,7 @@ import { useFireColl } from '../../hooks/firebase';
 import { firestore } from '../../utils/firebase';
 import Discussion from '../chat/Discussion';
 import { Components } from './Components';
+import { PostEditor } from './PostEditor';
 
 const handleChange = async (voted, optionId, id, user, userUid) => {
   try {
@@ -75,37 +76,9 @@ export const Poll = ({ poll, transition }) => {
         {/* <h3>A little desctiption goes heres</h3> */}
       </header>
       <hr className="dn" />
-      <div className="ma0">
-        {options &&
-          options.map(option => {
-            const voted = new Set(option.votes).has(user.uid);
-            const count = option.votes ? option.votes.length : 0;
-            return (
-              <div key={option.id} className="pa2 ma0 tl bg-white">
-                <label className=" ma0 w-100 ">
-                  <input
-                    type="checkbox"
-                    name="responses"
-                    checked={voted}
-                    onChange={() =>
-                      handleChange(voted, option.id, id, user, user.uid)
-                    }
-                  />{' '}
-                  {option.title}
-                  <span className="radiomark " />
-                </label>
-                <b className="f3 fr">{count}</b>
-              </div>
-            );
-          })}
-      </div>
-      {/* <h3>{deadline} left...</h3> */}
-      <InputForm
-        submitNewOption={submitNewOption}
-        id={id}
-        value={value}
-        setValue={setValue}
-      />
+
+      <PostEditor userId="foxtrot" postId={id} />
+
       {archived ? (
         <small
           className="washed-red b pointer mt3"

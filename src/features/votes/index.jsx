@@ -104,13 +104,16 @@ const Votes = ({ transition, set }) => {
         <Header
           dispatch={transition}
           type="POLL_CREATE_FORM_OPENED"
-          sectionTitle="Decisions"
+          sectionTitle="Project Name"
         />
         {polls && (
           <ActiveVotes polls={polls} transition={transition} setId={setId} />
         )}
         <small
           className="pointer"
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => (archived ? setArchived(false) : setArchived(true))}
           onClick={() => (archived ? setArchived(false) : setArchived(true))}
         >
           {archived
