@@ -1,5 +1,5 @@
 // import firebase from 'firebase/app';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form, Input } from 'antd';
 // import { useAuth } from '../../hooks/auth';
 // import { useFireColl } from '../../hooks/firebase';
@@ -9,7 +9,7 @@ import { firestore } from '../../utils/firebase';
 
 const { TextArea } = Input;
 
-// tests
+// TESTS
 // show error is problem saving
 // show saving state in button
 // !content should be a guard
@@ -33,10 +33,17 @@ export const postMachine = Machine(
   {
     id: 'postEditor',
     context: {
-      content: 'hello',
+      content: '',
       error: '',
     },
     initial: 'reading',
+    on: {
+      HYDRATED: {
+        actions: 'hydrateContent',
+
+        internal: true,
+      },
+    },
     states: {
       reading: {
         on: { TOGGLED: 'writing' },
@@ -75,6 +82,9 @@ export const postMachine = Machine(
       updateContent: assign((context, event) => ({
         content: event.payload.content,
       })),
+      hydrateContent: assign((context, event) => ({
+        content: event.payload.content,
+      })),
     },
   }
 );
@@ -82,6 +92,26 @@ export const postMachine = Machine(
 export const PostEditor = ({ userId, postId }) => {
   const [current, send] = useMachine(postMachine);
   const { content } = current.context;
+
+  useEffect(() => {
+    firestore
+      .doc(`posts/${postId}`)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          send({
+            type: 'HYDRATED',
+            payload: doc.data(),
+          });
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!');
+        }
+      })
+      .catch(error => {
+        console.log('Error getting document:', error);
+      });
+  }, [postId, send]);
 
   return (
     <div>
@@ -97,6 +127,7 @@ export const PostEditor = ({ userId, postId }) => {
                 })
               }
               value={content}
+              placeholder="Add content here..."
             />
           </Form.Item>
           <Form.Item>
