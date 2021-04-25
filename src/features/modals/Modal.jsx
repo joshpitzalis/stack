@@ -27,7 +27,7 @@ class Modal extends React.Component {
         <div
           className="center mw9 ma3 ma5-ns br2 pa3 shadow-1"
           style={{
-            background: '#f4f2e8'
+            background: '#f6f2ef'
           }}
         >
           <div className="w-100 tr">

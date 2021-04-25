@@ -1,3 +1,4 @@
+import { Editor } from './TrixEditor';
 // import firebase from 'firebase/app';
 import React, { useEffect } from 'react';
 import { Button, Form, Input } from 'antd';
@@ -6,28 +7,14 @@ import { Button, Form, Input } from 'antd';
 import { Machine, assign } from 'xstate';
 import { useMachine } from '@xstate/react';
 import { firestore } from '../../utils/firebase';
-
+import {handleSavePost, getContent} from './voteHelpers'
+import {ReadingDropdown} from './ReadingDropdown'
 const { TextArea } = Input;
 
-// TESTS
-// show error is problem saving
-// show saving state in button
-// !content should be a guard
-// add images to post pages
 
-const handleSavePost = async (userId, content, postId) => {
-  try {
-    if (!content) throw new Error('no content');
-    await firestore.doc(`posts/${postId}`).set({
-      id: postId,
-      author: userId,
-      content,
-      lastUpdated: new Date(),
-    });
-  } catch (error) {
-    throw new Error('error saving post');
-  }
-};
+
+
+
 
 export const postMachine = Machine(
   {
@@ -89,46 +76,31 @@ export const postMachine = Machine(
   }
 );
 
-export const PostEditor = ({ userId, postId }) => {
+
+
+
+export const PostEditor = ({ userId,  poll , transition }) => {
+  const postId = poll?.id
   const [current, send] = useMachine(postMachine);
   const { content } = current.context;
 
   useEffect(() => {
-    firestore
-      .doc(`posts/${postId}`)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          send({
-            type: 'HYDRATED',
-            payload: doc.data(),
-          });
-        } else {
-          // doc.data() will be undefined in this case
-          console.log('No such document!');
-        }
-      })
-      .catch(error => {
-        console.log('Error getting document:', error);
-      });
-  }, [postId, send]);
+    const _getContent = (a, b) => getContent(a, b)
+  _getContent(postId, send)
+}, [postId, send]);
 
   return (
+
+
+
     <div>
-      {current.matches('writing') && (
+
+
+      {     current.matches('writing') && (
         <>
           <Form.Item>
-            <TextArea
-              rows={4}
-              onChange={e =>
-                send({
-                  type: 'TYPED',
-                  payload: { content: e.target.value },
-                })
-              }
-              value={content}
-              placeholder="Add content here..."
-            />
+          <div className="mt-20"/>
+          <Editor content={content} send={send}/>
           </Form.Item>
           <Form.Item>
             <Button
@@ -150,17 +122,19 @@ export const PostEditor = ({ userId, postId }) => {
 
       {current.matches('reading') && (
         <>
-          <p>{content}</p>
-          <Button
-            htmlType="submit"
-            loading={false}
-            onClick={() => send('TOGGLED')}
-            type="primary"
-          >
-            Edit
-          </Button>
+          <div
+          className='tl'
+           dangerouslySetInnerHTML={{
+            __html: content
+          }} />
+
+          <ReadingDropdown   
+          send={send} 
+          poll={poll}
+          transition={transition}   />
         </>
       )}
     </div>
   );
 };
+
